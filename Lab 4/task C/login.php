@@ -4,42 +4,33 @@ session_start();
     $username = "admin";
     $password = "admin";
 
-// Function to check if the provided username and password are valid
-function authenticate($username, $password) {
-    // Read the user data from data.json file
-    $userData = file_get_contents('data.json');
-    $users = json_decode($userData, true);
+ 
 
-    // Check if the username and password match any user in the data.json file
-    foreach ($users as $user) {
-        if ($user['username'] === $username && $user['password'] === $password) {
-            return true;
+    if (isset($_POST['uname'])) {
+        if ($_POST['uname']==$username && $_POST['pass']==$password) {
+            $_SESSION['uname'] = $username;
+           
+            header("location:dashboard.php");
+        }
+        else{
+            $msg = "username or password invalid";
         }
     }
+ ?>
 
-    return false;
-}
+<form action="<?php echo $_SERVER['PHP_SELF'] ?>" method="post">
+    <span><?php
+        if (isset($msg)) {
+            echo $msg;
+        }
 
-// Check if the form is submitted
-if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $username = $_POST['username'];
-    $password = $_POST['password'];
+     ?>     
+     </span>
+     <br>
+    
 
-    // Authenticate the user
-    if (authenticate($username, $password)) {
-        $_SESSION['username'] = $username;
+</form>
 
-        // Set "Remember Me" cookie if the checkbox is checked
-        if (isset($_POST['remember'])) {
-            $expiry = time() + (30 * 24 * 60 * 60); // Set cookie expiration to 30 days
-            setcookie('remember_me', $username, $expiry);
-        }        
-        
-    } else {
-        $loginError = 'Invalid username or password';
-    }
-}
-?>
 
 <!DOCTYPE html>
 <html>
